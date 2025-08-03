@@ -151,6 +151,14 @@ typingArea.addEventListener("input", () => {
   }
 });
 
+// Stop test when Enter is pressed
+typingArea.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && isRunning && !testEnded) {
+    e.preventDefault(); // Prevent new line in textarea
+    endTest();
+  }
+});
+
 resetBtn.addEventListener("click", resetTest);
 
 // Enable typing area on load and set sentence
