@@ -46,8 +46,14 @@ body {
   transition: width 0.2s;
 }
 
+#sentence-label {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #d72660;
+}
+
 #text-to-type {
-  margin: 20px 0 10px 0;
+  margin: 8px 0 10px 0;
   font-size: 1.15rem;
   color: #af4d72;
   background: #fff0f6;

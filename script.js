@@ -1,22 +1,20 @@
-const textToTypeList = [
+const sentences = [
   "The quick brown fox jumps over the lazy dog.",
   "Typing is a skill you can improve daily.",
   "Practice makes perfect when it comes to speed.",
   "Every great achievement starts with the decision to try.",
   "Stay focused and keep typing with accuracy!",
+  "A journey of a thousand miles begins with a single step.",
+  "Success is not the key to happiness. Happiness is the key to success.",
 ];
 
-// Select a random text each test
-let textToType =
-  textToTypeList[Math.floor(Math.random() * textToTypeList.length)];
-
+let textToType = "";
 const textToTypeEl = document.getElementById("text-to-type");
 const typedOutputEl = document.getElementById("typed-output");
 const typingArea = document.getElementById("typing-area");
 const timeSpan = document.getElementById("time");
 const speedSpan = document.getElementById("speed");
 const accuracySpan = document.getElementById("accuracy");
-const startBtn = document.getElementById("start-btn");
 const resetBtn = document.getElementById("reset-btn");
 const progressBar = document.getElementById("progress-bar");
 const confettiEl = document.getElementById("confetti");
@@ -25,8 +23,9 @@ let timer = null;
 let startTime = null;
 let elapsed = 0;
 let isRunning = false;
+let testEnded = false;
 
-// For confetti effect
+// Confetti effect
 function launchConfetti() {
   confettiEl.innerHTML = "";
   for (let i = 0; i < 80; i++) {
@@ -62,20 +61,19 @@ function launchConfetti() {
   }
 }
 
-function showTextToType() {
+function setNewSentence() {
+  textToType = sentences[Math.floor(Math.random() * sentences.length)];
   textToTypeEl.textContent = textToType;
 }
 
 function showTypedOutput() {
   const typedText = typingArea.value;
   let resultHTML = "";
-  let correctChars = 0;
   for (let i = 0; i < textToType.length; i++) {
     if (typedText[i] == null) {
       resultHTML += `<span class="pending">${textToType[i]}</span>`;
     } else if (typedText[i] === textToType[i]) {
       resultHTML += `<span class="correct">${textToType[i]}</span>`;
-      correctChars++;
     } else {
       resultHTML += `<span class="incorrect">${textToType[i]}</span>`;
     }
@@ -86,53 +84,44 @@ function showTypedOutput() {
   progressBar.style.width = `${progress * 100}%`;
 }
 
-function startTest() {
-  textToType =
-    textToTypeList[Math.floor(Math.random() * textToTypeList.length)];
-  showTextToType();
-  typedOutputEl.innerHTML = "";
-  typingArea.value = "";
-  typingArea.disabled = false;
-  typingArea.focus();
-  startBtn.disabled = true;
-  resetBtn.disabled = false;
-  elapsed = 0;
-  timeSpan.textContent = "0";
-  speedSpan.textContent = "0";
-  accuracySpan.textContent = "0";
-  isRunning = true;
-  startTime = Date.now();
-  progressBar.style.width = "0";
-  confettiEl.innerHTML = "";
-  showTypedOutput();
-  timer = setInterval(() => {
-    elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    timeSpan.textContent = elapsed;
-  }, 100);
+function startTestOnType() {
+  if (!isRunning && typingArea.value.length === 1) {
+    isRunning = true;
+    startTime = Date.now();
+    timer = setInterval(() => {
+      elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      timeSpan.textContent = elapsed;
+    }, 100);
+    resetBtn.disabled = false;
+  }
 }
 
 function endTest() {
   clearInterval(timer);
   typingArea.disabled = true;
   isRunning = false;
+  testEnded = true;
   calculateResults();
-  startBtn.disabled = false;
   launchConfetti();
 }
 
 function resetTest() {
   clearInterval(timer);
   typingArea.value = "";
-  typingArea.disabled = true;
+  typingArea.disabled = false;
   timeSpan.textContent = "0";
   speedSpan.textContent = "0";
   accuracySpan.textContent = "0";
-  startBtn.disabled = false;
-  resetBtn.disabled = true;
   typedOutputEl.innerHTML = "";
   confettiEl.innerHTML = "";
   progressBar.style.width = "0";
-  showTextToType();
+  isRunning = false;
+  testEnded = false;
+  elapsed = 0;
+  setNewSentence();
+  showTypedOutput();
+  typingArea.focus();
+  resetBtn.disabled = true;
 }
 
 function calculateResults() {
@@ -155,17 +144,22 @@ function calculateResults() {
 
 typingArea.addEventListener("input", () => {
   showTypedOutput();
-  if (!isRunning) return;
+  startTestOnType();
+  if (!isRunning || testEnded) return;
   if (typingArea.value.length >= textToType.length) {
     endTest();
   }
 });
 
-startBtn.addEventListener("click", startTest);
 resetBtn.addEventListener("click", resetTest);
 
-typingArea.disabled = true;
-resetBtn.disabled = true;
-
-showTextToType();
-showTypedOutput();
+// Enable typing area on load and set sentence
+window.onload = () => {
+  typingArea.disabled = false;
+  setNewSentence();
+  showTypedOutput();
+  typingArea.value = "";
+  typingArea.focus();
+  testEnded = false;
+  resetBtn.disabled = true;
+};
