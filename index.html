@@ -7,21 +7,29 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Typing Speed Tester</h1>
-  
-  <p id="text-to-type">The quick brown fox jumps over the lazy dog.</p>
+  <div class="container">
+    <h1 class="title">Typing Speed Tester 🎉</h1>
+    
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
 
-  <textarea id="typing-area" placeholder="Start typing here..."></textarea>
+    <p id="sentence-label">Type this sentence:</p>
+    <p id="text-to-type"></p>
+    <div id="typed-output"></div>
+    <textarea id="typing-area" placeholder="Start typing here..." disabled></textarea>
 
-  <div id="results">
-    <p>Time: <span id="time">0</span> seconds</p>
-    <p>Speed: <span id="speed">0</span> WPM</p>
-    <p>Accuracy: <span id="accuracy">0</span>%</p>
+    <div id="results">
+      <p>⏱️ Time: <span id="time">0</span> seconds</p>
+      <p>⚡ Speed: <span id="speed">0</span> WPM</p>
+      <p>🎯 Accuracy: <span id="accuracy">0</span>%</p>
+    </div>
+
+    <div class="buttons">
+      <button id="reset-btn" disabled>Reset</button>
+    </div>
+    <div id="confetti"></div>
   </div>
-
-  <button id="start-btn">Start Test</button>
-  <button id="reset-btn">Reset</button>
-
   <script src="script.js"></script>
 </body>
 </html>
